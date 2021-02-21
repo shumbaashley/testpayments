@@ -11,26 +11,63 @@ class makePayment extends StatefulWidget {
 class _makePaymentState extends State<makePayment> {
   TextStyle style = TextStyle(fontFamily: 'Open Sans', fontSize: 15.0);
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  TextEditingController _amountController = new TextEditingController();
+
+  // show dialog for input of amount to top up account
+  enterAmount() => showDialog(
+        context: context,
+        builder: (BuildContext context) => new AlertDialog(
+          title: new Text('Enter amount'),
+          content: new TextField(
+            controller: _amountController,
+            maxLines: 1,
+            decoration: InputDecoration(
+              hintText: "e.g. 10",
+              labelText: "Amount",
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          actions: <Widget>[
+            new FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: new Text('CANCEL')),
+            new FlatButton(
+                onPressed: () async {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => PaypalPayment(
+                        // onFinish: (number) async {
+                        //   // payment done
+                        //   print('order id: ' + number);
+                        // },
+                        _amountController.text
+                      ),
+                    ),
+                  );
+                },
+                child: new Text('TOP UP')),
+          ],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: new Scaffold(
-          backgroundColor: Colors.transparent,
           key: _scaffoldKey,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(45.0),
             child: new AppBar(
-              backgroundColor: Colors.white,
               title: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Paypal Payment Example',
+                    'Top Up Example with WebView',
                     style: TextStyle(
                         fontSize: 16.0,
-                        color: Colors.red[900],
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Open Sans'),
                   ),
@@ -47,19 +84,8 @@ class _makePaymentState extends State<makePayment> {
                   children: <Widget>[
                     RaisedButton(
                       onPressed: () {
-                        // make PayPal payment
-
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (BuildContext context) => PaypalPayment(
-                              onFinish: (number) async {
-                                // payment done
-                                print('order id: ' + number);
-                                Get.to(makePayment());
-                              },
-                            ),
-                          ),
-                        );
+                        // enter amount to top up
+                        enterAmount();
                       },
                       child: Text(
                         'Top Up Account',

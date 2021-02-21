@@ -7,12 +7,13 @@ import './PayPalServices.dart';
 
 class PaypalPayment extends StatefulWidget {
   final Function onFinish;
+  final String amount;
 
-  PaypalPayment({this.onFinish});
+  PaypalPayment(this.amount, {this.onFinish});
 
   @override
   State<StatefulWidget> createState() {
-    return PaypalPaymentState();
+    return PaypalPaymentState(amount);
   }
 }
 
@@ -22,9 +23,14 @@ class PaypalPaymentState extends State<PaypalPayment> {
   String executeUrl;
   String accessToken;
   PaypalServices services = PaypalServices();
-
+  String amount;
   // you can change default currency according to your need
-  Map<dynamic,dynamic> defaultCurrency = {"symbol": "USD ", "decimalDigits": 2, "symbolBeforeTheNumber": true, "currency": "USD"};
+  Map<dynamic, dynamic> defaultCurrency = {
+    "symbol": "USD ",
+    "decimalDigits": 2,
+    "symbolBeforeTheNumber": true,
+    "currency": "USD"
+  };
 
   bool isEnableShipping = false;
   bool isEnableAddress = false;
@@ -33,7 +39,10 @@ class PaypalPaymentState extends State<PaypalPayment> {
   // String cancelURL= 'cancel.example.com';
 
   String returnURL = 'https://ashleytshumba.netlify.app/';
-  String cancelURL= 'https://ashleytshumba.netlify.app/';
+  String cancelURL = 'https://ashleytshumba.netlify.app/';
+  
+  // constructor
+  PaypalPaymentState(this.amount);
 
   @override
   void initState() {
@@ -41,12 +50,12 @@ class PaypalPaymentState extends State<PaypalPayment> {
 
     // Enable hybrid composition.
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
-  
+
     Future.delayed(Duration.zero, () async {
       try {
         accessToken = await services.getAccessToken();
 
-        final transactions = getOrderParams();
+        final transactions = getOrderParams(amount);
         final res =
             await services.createPaypalPayment(transactions, accessToken);
         if (res != null) {
@@ -56,7 +65,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
           });
         }
       } catch (e) {
-        print('exception: '+e.toString());
+        print('exception: ' + e.toString());
         final snackBar = SnackBar(
           content: Text(e.toString()),
           duration: Duration(seconds: 10),
@@ -77,20 +86,19 @@ class PaypalPaymentState extends State<PaypalPayment> {
   String itemPrice = '1.00';
   int quantity = 1;
 
-  Map<String, dynamic> getOrderParams() {
+  Map<String, dynamic> getOrderParams(String amount) {
     List items = [
       {
         "name": itemName,
         "quantity": quantity,
-        "price": itemPrice,
+        "price": amount,
         "currency": defaultCurrency["currency"]
       }
     ];
 
-
     // checkout invoice details
-    String totalAmount = '1.00';
-    String subTotalAmount = '1.00';
+    String totalAmount = amount;
+    String subTotalAmount = amount;
     String shippingCost = '0';
     int shippingDiscountCost = 0;
     String userFirstName = 'Gulshan';
@@ -113,8 +121,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
             "details": {
               "subtotal": subTotalAmount,
               "shipping": shippingCost,
-              "shipping_discount":
-                  ((-1.0) * shippingDiscountCost).toString()
+              "shipping_discount": ((-1.0) * shippingDiscountCost).toString()
             }
           },
           "description": "The payment transaction description.",
@@ -123,12 +130,9 @@ class PaypalPaymentState extends State<PaypalPayment> {
           },
           "item_list": {
             "items": items,
-            if (isEnableShipping &&
-                isEnableAddress)
+            if (isEnableShipping && isEnableAddress)
               "shipping_address": {
-                "recipient_name": userFirstName +
-                    " " +
-                    userLastName,
+                "recipient_name": userFirstName + " " + userLastName,
                 "line1": addressStreet,
                 "line2": "",
                 "city": addressCity,
@@ -141,10 +145,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
         }
       ],
       "note_to_payer": "Contact us for any questions on your order.",
-      "redirect_urls": {
-        "return_url": returnURL,
-        "cancel_url": cancelURL
-      }
+      "redirect_urls": {"return_url": returnURL, "cancel_url": cancelURL}
     };
     return temp;
   }
@@ -205,5 +206,3 @@ class PaypalPaymentState extends State<PaypalPayment> {
     }
   }
 }
-
-
