@@ -38,11 +38,12 @@ class _makePaymentState extends State<makePayment> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) => PaypalPayment(
-                        // onFinish: (number) async {
-                        //   // payment done
-                        //   print('order id: ' + number);
-                        // },
-                        _amountController.text
+                        _amountController.text,
+
+                        onFinish: (number) async {
+                          // payment done
+                          print('order id: ' + number);
+                        },
                       ),
                     ),
                   );

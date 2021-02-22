@@ -8,13 +8,19 @@ class PaypalServices {
 //  String domain = "https://api.paypal.com"; // for production mode
 
   // change clientId and secret with your own, provided by paypal
-  // String clientId = 'Ab4vS4vmfQFgUuQMH49F9Uy3L1FdNHtfGrASCyjNijm_EkHWCFM96ex0la-YFbwavw41R3rTKU3k_Bbm';
-  // String secret = 'EDjvPfYgTYqdYWR2BfOiBW4dz_jeeuadqH7Z98pZMDvY33PcViiooqYFWVPFSGbfKBfNOb3LnroSI1hv';
+  
+  // production
+  // String clientId = 'AcD_aubK5RLIzYz4XIfzGg2FTZIEpoAEdfHYYPWF94HQYk8I6d9gQt59kYZ8a3n4tMDoMHFAT07tC4uK';
+  // String secret = 'EFtOR5T5FzWnM39_z8fj-4em4tREA_fVnuF2EN1E4L6NWmPW6OQ90xdB4HIyyM9szyYq7T_nOVkN7A8R';
 
+
+// development
   String clientId =
       'AXAphywf5GsVe81PaVDr8lHkW-5XTE0S4BzhJ39f80AIP-7e2yuqFbJ9Z51g2T1zLGQNZKOnIdAg1ExV';
   String secret =
       'EPJel_dZIkL9mM1vqDgdjk5v91bLAOQ53mcU-ULdrQiyhtycBqHqg-eQ5i-nfoeT-bOKISBFnEbklOi0';
+
+
   // for getting the access token from Paypal
   Future<String> getAccessToken() async {
     try {
